@@ -1,5 +1,6 @@
 import re
-from langchain import LLMChain, PromptTemplate
+from langchain.chains import LLMChain
+from langchain_core.prompts import PromptTemplate
 from langchain_community.llms import OpenAI
 
 
