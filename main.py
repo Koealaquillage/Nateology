@@ -1,20 +1,20 @@
-import openai
 import streamlit as st
 import re
 from Prompts import CityCoordinatesGetter, GetWeatherFromjson
+import os
 from secret_key import openai_key
 
+os.environ['OPENAI_API_KEY'] = openai_key
 
 def main():
 
     st.title("Weather on Your Birthdate")
-    openai_api_key = openai_key
 
     city_name = st.text_input("Where were you born?")
     birth_date = st.text_input("When were you born (YYYY-MM-DD)?")
 
     citycoordinatesgetter = CityCoordinatesGetter(city_name)
-    lat_city, lon_city = citycoordinatesgetter.get_city_coordinates(city_name)
+    lat_city, lon_city = citycoordinatesgetter.get_city_coordinates()
 
     if st.button("Let's tell you who you are"):
         if city_name and birth_date:
