@@ -4,14 +4,13 @@ import openmeteo_requests
 import requests_cache
 import pandas as pd
 from retry_requests import retry
-from secret_key import Openweathermap_key
 
 
 class WeatherFetcher:
     def __init__(self, lat, lon, birthdate):
         self.lat = lat
         self.lon = lon
-        self.birth_date = birth_date
+        self.birth_date = birthdate
         self.url = "https://archive-api.open-meteo.com/v1/archive"
         self.params = {"latitude": self.lat,
 	                   "longitude": self.lon,
@@ -31,5 +30,4 @@ class WeatherFetcher:
 
     def fetch(self):
         responses = openmeteo.weather_api(self.url, params=self.params)
-        # Process first location. Add a for-loop for multiple locations or weather models
         response = responses[0]
