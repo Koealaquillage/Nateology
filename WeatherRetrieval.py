@@ -30,4 +30,5 @@ class WeatherFetcher:
 
     def fetch(self):
         responses = openmeteo.weather_api(self.url, params=self.params)
-        response = responses[0]
+        return responses[0]
+
