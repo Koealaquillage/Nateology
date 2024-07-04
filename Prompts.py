@@ -1,10 +1,7 @@
-import openai
 import re
 from langchain import LLMChain, PromptTemplate
 from langchain.llms import OpenAI
-from secret_key import openai_key
 
-openai.api_key = openai_key
 
 class CityCoordinatesGetter():
 
@@ -12,14 +9,15 @@ class CityCoordinatesGetter():
         self.city_name = city_name
         self.lat = None
         self.lon = None
+
         self.template =  PromptTemplate(
-                             input_variables=[city],
+                             input_variables=["city"],
                              template="What are the latitude and longitude coordinates of {city}?"
                             )
 
-       self.llm = OpenAI(engine="gpt-3.5-turbo") 
+        self.llm = OpenAI(temperature=0, max_tokens=30) 
 
-       self.chain = LLMChain(llm=llm, prompt=template)
+        self.chain = LLMChain(llm=self.llm, prompt=self.template)
 
     def get_city_coordinates(self):
         response = self.chain.run({"city": self.city_name})
@@ -37,14 +35,15 @@ class GetWeatherFromjson():
 
     def __init__(self, weather_data):
         self.weather_data = weather_data
+
         self.template =  PromptTemplate(
-                             input_variables=[weather],
+                             input_variables=["weather"],
                              template="How was the weather described by {weather}? Be very poetic"
                             )
 
-       self.llm = OpenAI(engine="gpt-3.5-turbo") 
+        self.llm = OpenAI(temperature=0.9, max_tokens=500) 
 
-       self.chain = LLMChain(llm=llm, prompt=template)
+        self.chain = LLMChain(llm=self.llm, prompt=self.template)
 
     def weather_description(self):
         response = self.chain.run({"weather": self.weather_data})
