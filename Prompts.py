@@ -1,6 +1,6 @@
 import re
 from langchain import LLMChain, PromptTemplate
-from langchain.llms import OpenAI
+from langchain_community.llms import OpenAI
 
 
 class CityCoordinatesGetter():
