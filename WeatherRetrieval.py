@@ -1,47 +1,35 @@
 import requests
 import datetime
+import openmeteo_requests
+import requests_cache
+import pandas as pd
+from retry_requests import retry
 from secret_key import Openweathermap_key
 
-# Replace with your OpenWeatherMap API key
-OPENWEATHERMAP_KEY = Openweathermap_key
 
 class WeatherFetcher:
-    def __init__(self, city_name, birthdate):
-        self.city_name = city_name
+    def __init__(self, lat, lon, birthdate):
+        self.lat = lat
+        self.lon = lon
         self.birth_date = birth_date
-        self.city_coord = []
-        
-    def get_city_coordinates(self):
-        url = f"http://api.openweathermap.org/data/2.5/weather?q={self.city_name}&appid={OPENWEATHERMAP_KEY}"
-        response = requests.get(url)
-        data = response.json()
-        if 'coord' in data:
-            self.city_coord = data['coord']
-    
-    def get_weather_on_date(self, city, date):
-        timestamp = int(date.timestamp())
-        url = f"http://api.openweathermap.org/data/2.5/onecall/timemachine?lat={city['lat']}&lon={city['lon']}&dt={timestamp}&appid={self.api_key}"
-        response = requests.get(url)
-        data = response.json()
-        if 'current' in data:
-            weather = data['current']['weather'][0]['description']
-            temp = data['current']['temp']
-            return weather, temp
-        return None, None
+        self.url = "https://archive-api.open-meteo.com/v1/archive"
+        self.params = {"latitude": self.lat,
+	                   "longitude": self.lon,
+	                   "start_date": birthdate,
+	                   "end_date": birthdate,
+	                   "hourly": ["temperature_2m",
+                                  "relative_humidity_2m",
+                                  "precipitation",
+                                  "surface_pressure",
+                                  "cloud_cover",
+                                  "wind_speed_10m"]
+                       }
+        # Setup the Open-Meteo API client with cache and retry on error
+        cache_session = requests_cache.CachedSession('.cache', expire_after = -1)
+        retry_session = retry(cache_session, retries = 5, backoff_factor = 0.2)
+        openmeteo = openmeteo_requests.Client(session = retry_session)
 
-    def fetch_weather(self):
-        try:
-            date = datetime.datetime.strptime(self.birth_date, '%Y-%m-%d')
-        except ValueError:
-            return "Invalid date format. Please use 'YYYY-MM-DD'."
-        
-        self.get_city_coordinates(city)
-        if not self.city_coord:
-            return "City not found."
-        
-        weather, temp = self.get_weather_on_date(self.city_coord, date)
-        if weather is None:
-            return "Weather data not found for the given date."
-        
-        temp_celsius = temp - 273.15  # Convert from Kelvin to Celsius
-        return f"The weather in {self.city_name} on {self.birth_date} was {weather} with a temperature of {temp_celsius:.2f}°C."
+    def fetch(self):
+        responses = openmeteo.weather_api(self.url, params=self.params)
+        # Process first location. Add a for-loop for multiple locations or weather models
+        response = responses[0]
