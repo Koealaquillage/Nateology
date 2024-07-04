@@ -27,7 +27,7 @@ class CityCoordinatesGetter():
         if match:
             self.lat = float(match.group(1))
             self.lon = float(match.group(2))
-            return [lat, lon]
+            return lat, lon
         else:
             return "Coordinates not found in the response."
         
