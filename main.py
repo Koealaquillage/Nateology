@@ -1,6 +1,6 @@
 import streamlit as st
-import re
-from Prompts import CityCoordinatesGetter, GetWeatherFromJson
+from Coordinates_retriever import CityCoordinatesGetter
+from Prompts import  GetWeatherFromJson
 from WeatherRetrieval import WeatherFetcher,get_parameter_value_for_hour
 import os
 from secret_key import openai_key
