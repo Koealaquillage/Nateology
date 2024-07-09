@@ -1,6 +1,7 @@
 import streamlit as st
 import re
-from Prompts import CityCoordinatesGetter, GetWeatherFromjson
+from Prompts import CityCoordinatesGetter, GetWeatherFromJson
+from WeatherRetrieval import WeatherFetcher
 import os
 from secret_key import openai_key
 
@@ -8,25 +9,26 @@ os.environ['OPENAI_API_KEY'] = openai_key
 
 def main():
 
+    weather_fetcher = WeatherFetcher()
+
     st.title("Weather on Your Birthdate")
 
     city_name = st.text_input("Where were you born?")
     birth_date = st.text_input("When were you born (YYYY-MM-DD)?")
 
-    citycoordinatesgetter = CityCoordinatesGetter(city_name)
-    lat_city, lon_city = citycoordinatesgetter.get_city_coordinates()
-
     if st.button("Let's tell you who you are"):
         if city_name and birth_date:
+            print(city_name)
+            citycoordinatesgetter = CityCoordinatesGetter(city_name)
+            lat_city, lon_city = citycoordinatesgetter.get_city_coordinates()
 
-            weather_fetcher = WeatherFetcher(lat_city, lon_city, birth_date)
-            weather_info = weather_fetcher.fetch_weather(city_name, birth_date)
+            weather_info = weather_fetcher.fetch(lat_city, lon_city, birth_date)
             
-            WeatherDescriptor = GetWeatherFromjson(weather_info)
+            WeatherDescriptor = GetWeatherFromJson(weather_info)
 
             weather_description = WeatherDescriptor.weather_description()
 
-            st.write(response.choices[0].text.strip())
+            st.write(weather_description)
         else:
             st.error("Please enter both the city and birthdate.")
 
