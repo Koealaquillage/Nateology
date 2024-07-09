@@ -16,7 +16,7 @@ class WeatherFetcher:
     def fetch(self, lat, lon, date):
         # Build the URL for the given latitude, longitude, and date
         self.build_url(lat, lon, date)
-
+        print(self.url)
         # Send a GET request to the API
         response = requests.get(self.url)
     
@@ -31,7 +31,7 @@ class WeatherFetcher:
 
 def get_parameter_value_for_hour(weather_data, parameter, hour=12):
     # Convert hour string to a standard format to match JSON data
-    target_hour = hour + ":00"  # Ensure it matches the formatting in the JSON data
+    target_hour = str(hour) + ":00"  # Ensure it matches the formatting in the JSON data
 
     # Check if the parameter and hour exist in the data
     if parameter in weather_data['hourly_units'] and target_hour in weather_data['hourly']['time']:
