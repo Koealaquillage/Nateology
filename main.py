@@ -3,7 +3,7 @@ from Coordinates_retriever import CityCoordinatesGetter
 from Prompts import  GetWeatherFromJson
 from WeatherRetrieval import WeatherFetcher,get_parameter_value_for_hour
 import os
-from secret_key import openai_key
+from secret_key import openai_key, geocoding_key
 
 os.environ['OPENAI_API_KEY'] = openai_key
 
@@ -24,8 +24,8 @@ def main():
     if st.button("Let's tell you who you are"):
         if city_name and birth_date:
             print(city_name)
-            citycoordinatesgetter = CityCoordinatesGetter(city_name)
-            lat_city, lon_city = citycoordinatesgetter.get_city_coordinates()
+            citycoordinatesgetter = CityCoordinatesGetter(geocoding_key)
+            lat_city, lon_city = citycoordinatesgetter.get_city_coordinates(city_name)
 
             weather_info = weather_fetcher.fetch(lat_city, lon_city, birth_date)
 
