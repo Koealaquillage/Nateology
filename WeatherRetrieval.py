@@ -16,6 +16,7 @@ class WeatherFetcher:
     def fetch(self, lat, lon, date):
         # Build the URL for the given latitude, longitude, and date
         self.build_url(lat, lon, date)
+        print(self.url)
         # Send a GET request to the API
         response = requests.get(self.url)
     
