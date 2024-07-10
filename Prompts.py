@@ -1,26 +1,22 @@
-import re
-from langchain.chains import LLMChain
-from langchain_core.prompts import PromptTemplate
-from langchain_openai import OpenAI
-
+import openai
 
 class GetWeatherFromJson():
-    def __init__(self, weather_data):
-        self.weather_data = weather_data
+    def __init__(self, api_key):
+        self.client = openai.OpenAI(
+                 api_key=api_key,  # this is also the default, it can be omitted
+                 )
 
-        # Define the prompt template for the language model
-        self.template = PromptTemplate(
-            input_variables=["weather"],
-            template="How was the weather described by {weather}? Be very poetic."
+    def weather_description(self, weather_data):
+        
+        response = self.client.chat.completions.create( model="gpt-4",
+            messages=[{"role": "system", "content": "Generate a poetic description of the weather."}, 
+                      {"role": "user", "content": "It is 27 degree and the sun is shining"}],
+            temperature=0.9,
+            max_tokens=500,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0
         )
-
-        # Initialize the language model with specified parameters
-        self.llm = OpenAI(temperature=0.9, max_tokens=500)
-
-        # Create a chain that combines the language model with the prompt
-        self.chain = LLMChain(llm=self.llm, prompt=self.template)
-
-    def weather_description(self):
-        # Run the chain with the weather data and return the first response
-        response = self.chain.run({"weather": self.weather_data})
-        return response[0] if response else "No response generated."
+        
+        # Extract and return the text from the response
+        return response.choices[0].message.content.strip() if response.choices else "No response generated."
