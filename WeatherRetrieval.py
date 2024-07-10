@@ -28,9 +28,9 @@ class WeatherFetcher:
             return {"error": "Failed to fetch data", "status_code": response.status_code}
 
 
-def get_parameter_value_for_hour(weather_data, parameter, hour=12):
+def get_parameter_value_for_hour(weather_data, parameter, date, hour=12):
     # Convert hour string to a standard format to match JSON data
-    target_hour = str(hour) + ":00"  # Ensure it matches the formatting in the JSON data
+    target_hour = date + 'T' + str(hour) + ":00"  # Ensure it matches the formatting in the JSON data
 
     # Check if the parameter and hour exist in the data
     if parameter in weather_data['hourly_units'] and target_hour in weather_data['hourly']['time']:
