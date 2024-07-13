@@ -3,7 +3,19 @@ from Coordinates_retriever import CityCoordinatesGetter
 from Prompts import  GetWeatherFromJson
 from WeatherRetrieval import WeatherFetcher, get_parameter_value_for_hour
 import os
+import base64
 from secret_key import openai_key, geocoding_key
+
+def autoplay_audio(file_path: str):
+    with open(file_path, "rb") as f:
+        data = f.read()
+    b64 = base64.b64encode(data).decode("utf-8")
+    md = f"""
+    <audio autoplay>
+    <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
+    </audio>
+    """
+    st.markdown(md, unsafe_allow_html=True)
 
 parameters = ["temperature_2m", "relative_humidity_2m", "precipitation",
                        "surface_pressure", "cloud_cover", "wind_speed_10m"]
@@ -38,6 +50,12 @@ def main():
             weather_description = WeatherDescriptor.weather_description(weather_at_given_hour)
 
             st.write(weather_description)
+
+            audio_file = WeatherDescriptor.text_to_speech(weather_description)
+
+            autoplay_audio(audio_file)
+
+            os.remove(audio_file)
         else:
             st.error("Please enter both the city and birthdate.")
 
