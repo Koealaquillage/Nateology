@@ -8,16 +8,17 @@ from secret_key import openai_key, geocoding_key
 parameters = ["temperature_2m", "relative_humidity_2m", "precipitation",
                        "surface_pressure", "cloud_cover", "wind_speed_10m"]
 
-weather_at_noon = {}
+weather_at_given_hour = {}
 
 def main():
 
     weather_fetcher = WeatherFetcher()
 
-    st.title("Weather on Your Birthdate")
+    st.title("Nateology")
 
     city_name = st.text_input("Where were you born?")
     birth_date = st.text_input("When were you born (YYYY-MM-DD)?")
+    hour_birth = st.text_input("At what hour (00-23)")
 
     if st.button("Let's tell you who you are"):
         if city_name and birth_date:
@@ -27,14 +28,14 @@ def main():
             weather_info = weather_fetcher.fetch(lat_city, lon_city, birth_date)
             print(weather_info)
             for param in parameters:
-                weather_at_noon[param] = get_parameter_value_for_hour(weather_info, param, birth_date)
+                weather_at_given_hour[param] = get_parameter_value_for_hour(weather_info, param, birth_date, hour_birth)
             
-            print(weather_at_noon)
+            print(weather_at_given_hour)
             
             
             WeatherDescriptor = GetWeatherFromJson(openai_key)
 
-            weather_description = WeatherDescriptor.weather_description(weather_at_noon)
+            weather_description = WeatherDescriptor.weather_description(weather_at_given_hour)
 
             st.write(weather_description)
         else:
