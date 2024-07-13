@@ -34,28 +34,26 @@ def main():
 
     if st.button("Let's tell you who you are"):
         if city_name and birth_date:
-            citycoordinatesgetter = CityCoordinatesGetter(geocoding_key)
-            lat_city, lon_city = citycoordinatesgetter.get_city_coordinates(city_name)
+             with st.spinner("Interrogating the elements..."):
+                 citycoordinatesgetter = CityCoordinatesGetter(geocoding_key)
+                 lat_city, lon_city = citycoordinatesgetter.get_city_coordinates(city_name)
 
-            weather_info = weather_fetcher.fetch(lat_city, lon_city, birth_date)
-            print(weather_info)
-            for param in parameters:
-                weather_at_given_hour[param] = get_parameter_value_for_hour(weather_info, param, birth_date, hour_birth)
-            
-            print(weather_at_given_hour)
+                 weather_info = weather_fetcher.fetch(lat_city, lon_city, birth_date)
+                 for param in parameters:
+                     weather_at_given_hour[param] = get_parameter_value_for_hour(weather_info, param, birth_date, hour_birth)
             
             
-            WeatherDescriptor = GetWeatherFromJson(openai_key)
+                 WeatherDescriptor = GetWeatherFromJson(openai_key)
 
-            weather_description = WeatherDescriptor.weather_description(weather_at_given_hour)
+                 weather_description = WeatherDescriptor.weather_description(weather_at_given_hour)
 
-            st.write(weather_description)
+             st.write(weather_description)
+             with st.spinner("Preparing our most beautiful voice"):
+                 audio_file = WeatherDescriptor.text_to_speech(weather_description)
 
-            audio_file = WeatherDescriptor.text_to_speech(weather_description)
+             autoplay_audio(audio_file)
 
-            autoplay_audio(audio_file)
-
-            os.remove(audio_file)
+             os.remove(audio_file)
         else:
             st.error("Please enter both the city and birthdate.")
 
