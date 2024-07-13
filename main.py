@@ -4,7 +4,9 @@ from Prompts import  GetWeatherFromJson
 from WeatherRetrieval import WeatherFetcher, get_parameter_value_for_hour
 import os
 import base64
-from secret_key import openai_key, geocoding_key
+
+openai_key = st.secrets["openai_key"]
+geocoding_key = st.secrets["geocoding_key"]
 
 def autoplay_audio(file_path: str):
     with open(file_path, "rb") as f:
