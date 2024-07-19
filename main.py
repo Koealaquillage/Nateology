@@ -3,6 +3,7 @@ from Coordinates_retriever import CityCoordinatesGetter
 from Prompts import  GetWeatherFromJson
 from WeatherRetrieval import WeatherFetcher, get_parameter_value_for_hour
 from audio import autoplay_audio
+from front_end import texts
 import os
 
 
@@ -20,13 +21,18 @@ def main():
 
     st.title("Nateology")
 
-    city_name = st.text_input("Where were you born?")
-    birth_date = st.text_input("When were you born (YYYY-MM-DD)?")
-    hour_birth = st.text_input("At what hour (00-23)")
+    # Language selection
+    language = st.selectbox("Select Language / Sélectionnez la langue / Seleccione el idioma", ("English", "Français", "Español"))
 
-    if st.button("Let's tell you who you are"):
+    selected_texts = texts[language]
+
+    city_name = st.text_input(selected_texts["city_input"])
+    birth_date = st.text_input(selected_texts["date_input"])
+    hour_birth = st.text_input(selected_texts["hour_input"])
+
+    if st.button(selected_texts["button"]):
         if city_name and birth_date:
-             with st.spinner("Interrogating the elements..."):
+             with st.spinner(selected_texts["interrogating"]):
                  citycoordinatesgetter = CityCoordinatesGetter(geocoding_key)
                  lat_city, lon_city = citycoordinatesgetter.get_city_coordinates(city_name)
 
@@ -40,7 +46,7 @@ def main():
                  weather_description = WeatherDescriptor.weather_description(weather_at_given_hour)
 
              st.write(weather_description)
-             with st.spinner("Preparing our most beautiful voice"):
+             with st.spinner(selected_texts["preparing_voice"]):
                  audio_file = WeatherDescriptor.text_to_speech(weather_description)
 
              autoplay_audio(audio_file)
