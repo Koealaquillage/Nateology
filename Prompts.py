@@ -1,4 +1,5 @@
 import openai
+from chatbot_instructions import chatbot_instructions
 
 class GetWeatherFromJson():
     def __init__(self, api_key):
@@ -9,10 +10,10 @@ class GetWeatherFromJson():
     def weather_description(self, weather_data):
         
         response = self.client.chat.completions.create( model="gpt-4",
-            messages=[{"role": "system", "content": "Hello! You are a chatbot that predicts personnality according on the weather. A clear sky means that you are open to higher, abstract thinking as well as esoteric view. The presence of humidity means you are connected to the world because of the cycle of water, while the absence means you are more focus on your direct surroundings and your inner self. The heat means you are easygoing and easily communicate with people, while the cold goes rather for a rich inner world. Rain or precipitation means you are patient because you are preparing the soil of your personnality and will be ready to grow, while a dry climate means you are more spontaneous and live in the moment.No need for the summary at the beginning. Just write very nice paragraphs, a bit lyrical with a vocabulary that uses a lot of nature metaphors.Two things: Be abstract - don't precise the temperature. Also, it was the weather on the day of birth. It is not the weather today, so it is in the past."}, 
+            messages=[{"role": "system", "content": chatbot_instructions}, 
                       {"role": "user", "content": f"The weather was {weather_data}"}],
             temperature=0.9,
-            max_tokens=500,
+            max_tokens=600,
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0
