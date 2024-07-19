@@ -2,22 +2,12 @@ import streamlit as st
 from Coordinates_retriever import CityCoordinatesGetter
 from Prompts import  GetWeatherFromJson
 from WeatherRetrieval import WeatherFetcher, get_parameter_value_for_hour
+from audio import autoplay_audio
 import os
-import base64
+
 
 openai_key = st.secrets["openai_key"]
 geocoding_key = st.secrets["geocoding_key"]
-
-def autoplay_audio(file_path: str):
-    with open(file_path, "rb") as f:
-        data = f.read()
-    b64 = base64.b64encode(data).decode("utf-8")
-    md = f"""
-    <audio autoplay>
-    <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
-    </audio>
-    """
-    st.markdown(md, unsafe_allow_html=True)
 
 parameters = ["temperature_2m", "relative_humidity_2m", "precipitation",
                        "surface_pressure", "cloud_cover", "wind_speed_10m"]
