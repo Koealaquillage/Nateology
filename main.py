@@ -41,7 +41,7 @@ def main():
                      weather_at_given_hour[param] = get_parameter_value_for_hour(weather_info, param, birth_date, hour_birth)
             
             
-                 WeatherDescriptor = GetWeatherFromJson(openai_key)
+                 WeatherDescriptor = GetWeatherFromJson(openai_key, language)
 
                  weather_description = WeatherDescriptor.weather_description(weather_at_given_hour)
 

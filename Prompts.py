@@ -1,16 +1,17 @@
 import openai
-from chatbot_instructions import chatbot_instructions
+from chatbot_instructions import generate_chatbot_instructions
 
 class GetWeatherFromJson():
-    def __init__(self, api_key):
+    def __init__(self, api_key, language):
         self.client = openai.OpenAI(
                  api_key=api_key,  # this is also the default, it can be omitted
                  )
+        self.language = language
 
     def weather_description(self, weather_data):
         
         response = self.client.chat.completions.create( model="gpt-4",
-            messages=[{"role": "system", "content": chatbot_instructions}, 
+            messages=[{"role": "system", "content": generate_chatbot_instructions(self.language)}, 
                       {"role": "user", "content": f"The weather was {weather_data}"}],
             temperature=0.9,
             max_tokens=600,
